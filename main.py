@@ -9,11 +9,11 @@ def get_collection():
 
 collection = get_collection()
 
-tokenizer = Tokenizer([""])
-normalizer = Normalizer(numbers=True)
+tokenizer = Tokenizer()
+normalizer = Normalizer()
 
-tokens = []
+postings_list = {}
+
 for document_id, document in collection.items():
-    # for token in tokenizer.tokenize(collection[document_id]["content"]):
-    #     tokens.append((token, document_id))
-    print(normalizer.normalize(text=collection[document_id]["content"]))
+    normalized_text = normalizer.normalize(text=collection[document_id]["content"])
+    tokens = tokenizer.tokenize(text=collection[document_id]["content"])

@@ -4,6 +4,7 @@ from hazm import Normalizer
 
 class Normalizer:
     # These should be right before a word seperated by a half space.
+    # TODO: Separate & Classify THESE
     SPACING_PATTERN = ['ی', 'ای', 'ها', 'های', 'تر', 'تری', 'ترین', 'گر', 'گری', 'ام', 'ات', 'اش', 'اعداد', 'می', 'نمی']
 
     # The english numbers within the text should be converted into persian numbers.
@@ -63,21 +64,20 @@ class Normalizer:
 
     @staticmethod
     def _correct_spacing(text: str) -> str:
-        ...
+        return text
 
     @staticmethod
     def _unicodes_replacement(text: str) -> str:
-        ...
+        return text
 
     @staticmethod
     def _remove_diacritics(text: str) -> str:
-        ...
+        return text
 
     @staticmethod
     def _remove_specials_chars(text: str) -> str:
-        ...
+        return text
 
     @staticmethod
     def _persian_numbers(text: str) -> str:
-        ...
-
+        return text
