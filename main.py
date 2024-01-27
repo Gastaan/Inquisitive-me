@@ -16,12 +16,12 @@ def process_text(text: str) -> list:
     return tokens
 
 
-tokenizer = WordTokenizer()
+collection = get_collection()
 normalizer = Normalizer()
+tokenizer = WordTokenizer()
 stemmer = Stemmer()
 positional_inverted_index = Indexer()
 
-collection = get_collection()
 
 for document_id, document in collection.items():
     cleaned_tokens = process_text(collection[document_id]["content"])
