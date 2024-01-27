@@ -4,7 +4,11 @@ class Term:
 
 class Indexer:
     def __init__(self, load_index: bool = False, similarity_function: str = 'cosine'):
+        self._similarity_function = similarity_function
         self._postings_list = dict()
+
+        if load_index:
+            self.load_index()
 
     def insert_tokens(self, tokens: list):
         for i in range(len(tokens)):
@@ -20,4 +24,3 @@ class Indexer:
 
     def load_index(self):
         ...
-

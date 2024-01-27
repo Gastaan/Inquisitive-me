@@ -1,7 +1,3 @@
-import re
-from hazm import WordTokenizer, Normalizer
-
-
 class WordTokenizer:
     def __init__(self, join_verb_parts: bool = True, join_abbreviation: bool = True):
         self._join_verb_parts = join_verb_parts

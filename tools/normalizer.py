@@ -1,7 +1,3 @@
-import re
-from hazm import Normalizer
-
-
 class Normalizer:
     # These should be right before a word seperated by a half space.
     # TODO: Separate & Classify THESE
