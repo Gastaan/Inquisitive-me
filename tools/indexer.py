@@ -3,6 +3,7 @@ import heapq
 import pickle
 import os
 
+
 class DocTerm:
     def __init__(self, doc_id: int):
         self.doc_id = doc_id
