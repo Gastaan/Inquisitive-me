@@ -29,6 +29,7 @@ class Indexer:
         self._doc_length = {}
         self._K = k
         self._N = collection_size
+        self._champions_list = None
 
         if load_index:
             self.load_index()
@@ -69,11 +70,25 @@ class Indexer:
             print(term, postings_list[term][0])
             self.postings_list.pop(term, None)
 
-    # Make an indexer with the highest term frequencies
-    def get_champions_list(self) -> 'Indexer':
-        ...
+    def create_champions_list(self) -> None:
+        if self._champions_list:
+            return
+
+        champions_list = Indexer(collection_size=self._N)
+        postings_list = self.postings_list
+        for term in postings_list.keys():
+            postings = list(postings_list[term][1])
+            top_k = heapq.nlargest(self._K, postings, key=lambda x: x.count)
+            champions_list.postings_list[term] = (postings_list[term][0], top_k)
+
+        self._champions_list = champions_list
 
     def process_query(self, query: list) -> list:
+        if self._champions_list:
+            results = self._champions_list.process_query(query)
+            if len(results) == self._K:
+                return results
+
         postings_list = self.postings_list
         scores = {}
         for term in query:
