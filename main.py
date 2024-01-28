@@ -31,8 +31,12 @@ for document_id, document in collection.items():
 positional_inverted_index.delete_high_frequency_words()
 positional_inverted_index.save_index()
 
-queries = []
+queries = ["سامان"]
 
 for query in queries:
     cleaned_query = process_text(query)
-    print(f"Query: {query} \n", positional_inverted_index.process_query(query))
+    print(f"Query: {query} \n")
+    related_docs = positional_inverted_index.process_query(cleaned_query)
+    for related_doc in related_docs:
+        (doc_id, score) = related_doc
+        print(collection[doc_id], '\n_____________________\n')

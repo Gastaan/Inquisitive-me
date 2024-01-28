@@ -1,5 +1,5 @@
 import math
-
+import heapq
 
 class DocTerm:
     def __init__(self, doc_id: int):
@@ -39,22 +39,22 @@ class Indexer:
                 self.postings_list[token] = (1, [])
                 unique_tokens.add(token)
 
-            document_frequency, posting_list = self.postings_list[token]
+            document_frequency, postings = self.postings_list[token]
 
             if token not in unique_tokens:
                 unique_tokens.add(token)
                 document_frequency += 1
 
             doc_term = None
-            if len(posting_list) > 0:
-                doc_term = posting_list[-1]
+            if len(postings) > 0:
+                doc_term = postings[-1]
 
             if doc_term is None or doc_term.doc_id != doc_id:
                 doc_term = DocTerm(doc_id)
-                posting_list.append(doc_term)
+                postings.append(doc_term)
 
             doc_term.add_position(i)
-            self.postings_list[token] = (document_frequency, posting_list)
+            self.postings_list[token] = (document_frequency, postings)
 
     def delete_high_frequency_words(self):
         postings_list = self.postings_list
@@ -66,11 +66,26 @@ class Indexer:
             print(term, postings_list[term][0])
             self.postings_list.pop(term, None)
 
+    # Make a indexer with the highest term frequencies
     def get_champions_list(self) -> 'Indexer':
         ...
 
-    def process_query(self, query: str) -> list:
-        ...
+    def process_query(self, query: list) -> list:
+        postings_list = self.postings_list
+        scores = {}
+        for term in query:
+            document_frequency, postings = postings_list[term]
+            for posting in postings:
+                tf = posting.count
+                doc_id = posting.doc_id
+                scores[doc_id] += Indexer.tf_calculation(tf) * self.df_calculation(document_frequency)
+
+        for doc_id in scores.keys():
+            scores[doc_id] /= self._doc_length[doc_id]
+
+        top_k = heapq.nlargest(self._K, scores.items(), key=lambda x: x[1])
+
+        return [(doc_id, score) for doc_id, score in top_k]
 
     def save_index(self):
         ...
