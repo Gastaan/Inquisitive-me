@@ -20,13 +20,17 @@ class Indexer:
                  collection_size: int,
                  load_index: bool = False,
                  postings_list: dict = None,
+                 docs_length: dict = None,
                  k: int = 10,
                  ):
+
         if postings_list is None:
             postings_list = dict()
+        if docs_length is None:
+            docs_length = dict()
 
         self.postings_list = postings_list
-        self._doc_length = {}
+        self._docs_length = docs_length
         self._K = k
         self._N = collection_size
         self._champions_list = None
@@ -36,7 +40,7 @@ class Indexer:
 
     def insert_tokens(self, doc_id: int, tokens: list):
         unique_tokens = set()
-        self._doc_length[doc_id] = len(tokens)
+        self._docs_length[doc_id] = len(tokens)
         for i in range(len(tokens)):
             token = tokens[i]
             if token not in self.postings_list.keys():
@@ -74,7 +78,7 @@ class Indexer:
         if self._champions_list:
             return
 
-        champions_list = Indexer(collection_size=self._N)
+        champions_list = Indexer(collection_size=self._N, docs_length=self._docs_length)
         postings_list = self.postings_list
         for term in postings_list.keys():
             postings = list(postings_list[term][1])
@@ -129,5 +133,5 @@ class Indexer:
 
     def normalizer(self, scores: dict):
         for doc_id in scores.keys():
-            scores[doc_id] /= self._doc_length[doc_id]
+            scores[doc_id] /= self._docs_length[doc_id]
         return scores
