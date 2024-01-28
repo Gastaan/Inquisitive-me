@@ -21,7 +21,7 @@ normalizer = Normalizer()
 tokenizer = WordTokenizer()
 stemmer = Stemmer()
 
-positional_inverted_index = Indexer()
+positional_inverted_index = Indexer(collection_size=len(collection.keys()))
 
 
 for document_id, document in collection.items():

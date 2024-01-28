@@ -1,3 +1,6 @@
+import math
+
+
 class DocTerm:
     def __init__(self, doc_id: int):
         self.doc_id = doc_id
@@ -10,21 +13,26 @@ class DocTerm:
 
 
 class Indexer:
-    def __init__(self, load_index: bool = False,
+    def __init__(self,
+                 collection_size: int,
+                 load_index: bool = False,
                  postings_list: dict = None,
-                 k: int = 10
+                 k: int = 10,
                  ):
         if postings_list is None:
             postings_list = dict()
 
         self.postings_list = postings_list
+        self._doc_length = {}
         self._K = k
+        self._N = collection_size
 
         if load_index:
             self.load_index()
 
     def insert_tokens(self, doc_id: int, tokens: list):
         unique_tokens = set()
+        self._doc_length[doc_id] = len(tokens)
         for i in range(len(tokens)):
             token = tokens[i]
             if token not in self.postings_list.keys():
@@ -70,11 +78,12 @@ class Indexer:
     def load_index(self):
         ...
 
-    def tf_calculation(self):
-        ...
+    @staticmethod
+    def tf_calculation(tf: int) -> float:
+        return 1 + math.log(tf)
 
-    def df_calculation(self):
-        ...
+    def df_calculation(self, df: int):
+        return 1 + math.log(self._N / df)
 
-    def normalizer(self):
+    def normalizer(self, ):
         ...
