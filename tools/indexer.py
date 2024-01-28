@@ -1,5 +1,7 @@
 import math
 import heapq
+import pickle
+import os
 
 class DocTerm:
     def __init__(self, doc_id: int):
@@ -66,7 +68,7 @@ class Indexer:
             print(term, postings_list[term][0])
             self.postings_list.pop(term, None)
 
-    # Make a indexer with the highest term frequencies
+    # Make an indexer with the highest term frequencies
     def get_champions_list(self) -> 'Indexer':
         ...
 
@@ -78,27 +80,38 @@ class Indexer:
             for posting in postings:
                 tf = posting.count
                 doc_id = posting.doc_id
+                if doc_id not in scores:
+                    scores[doc_id] = 0.0
                 scores[doc_id] += Indexer.tf_calculation(tf) * self.df_calculation(document_frequency)
 
-        for doc_id in scores.keys():
-            scores[doc_id] /= self._doc_length[doc_id]
-
+        scores = self.normalizer(scores)
         top_k = heapq.nlargest(self._K, scores.items(), key=lambda x: x[1])
 
         return [(doc_id, score) for doc_id, score in top_k]
 
     def save_index(self):
-        ...
+        with open('./collection/indexer.pkl', 'wb') as file:
+            pickle.dump(self, file)
 
-    def load_index(self):
-        ...
+    @staticmethod
+    def load_index():
+        file_path = './collection/indexer.pkl'
+
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as file:
+                return pickle.load(file)
+
+        else:
+            return False
 
     @staticmethod
     def tf_calculation(tf: int) -> float:
         return 1 + math.log(tf)
 
     def df_calculation(self, df: int):
-        return 1 + math.log(self._N / df)
+        return 1 + math.log(self._N / float(df))
 
-    def normalizer(self, ):
-        ...
+    def normalizer(self, scores: dict):
+        for doc_id in scores.keys():
+            scores[doc_id] /= self._doc_length[doc_id]
+        return scores

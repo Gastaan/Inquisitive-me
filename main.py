@@ -21,15 +21,17 @@ normalizer = Normalizer()
 tokenizer = WordTokenizer()
 stemmer = Stemmer()
 
-positional_inverted_index = Indexer(collection_size=len(collection.keys()))
+positional_inverted_index = Indexer.load_index()
 
+if not positional_inverted_index:
+    Indexer(collection_size=len(collection.keys()))
+    for document_id, document in collection.items():
+        cleaned_tokens = process_text(collection[document_id]["content"])
+        positional_inverted_index.insert_tokens(document_id, cleaned_tokens)
 
-for document_id, document in collection.items():
-    cleaned_tokens = process_text(collection[document_id]["content"])
-    positional_inverted_index.insert_tokens(document_id, cleaned_tokens)
+    positional_inverted_index.delete_high_frequency_words()
 
-positional_inverted_index.delete_high_frequency_words()
-positional_inverted_index.save_index()
+    positional_inverted_index.save_index()
 
 queries = ["سامان"]
 
