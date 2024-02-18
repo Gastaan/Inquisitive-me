@@ -64,10 +64,15 @@ class Indexer:
             doc_term.add_position(i)
             self.postings_list[token] = (document_frequency, postings)
 
-    def delete_high_frequency_words(self):
+    def high_frequency_terms(self):
         postings_list = self.postings_list
         document_frequencies = [(postings_list[term][0], term) for term in postings_list.keys()]
         document_frequencies.sort(reverse=True)
+        return document_frequencies
+
+    def delete_high_frequency_words(self):
+        document_frequencies = self.high_frequency_terms()
+        postings_list = self.postings_list
 
         for i in range(min(50, len(document_frequencies))):
             term = document_frequencies[i][1]
@@ -96,13 +101,14 @@ class Indexer:
         postings_list = self.postings_list
         scores = {}
         for term in query:
-            document_frequency, postings = postings_list[term]
-            for posting in postings:
-                tf = posting.count
-                doc_id = posting.doc_id
-                if doc_id not in scores:
-                    scores[doc_id] = 0.0
-                scores[doc_id] += Indexer.tf_calculation(tf) * self.df_calculation(document_frequency)
+            if term in postings_list.keys():
+                document_frequency, postings = postings_list[term]
+                for posting in postings:
+                    tf = posting.count
+                    doc_id = posting.doc_id
+                    if doc_id not in scores:
+                        scores[doc_id] = 0.0
+                    scores[doc_id] += Indexer.tf_calculation(tf) * self.df_calculation(document_frequency)
 
         scores = self.normalizer(scores)
         top_k = heapq.nlargest(self._K, scores.items(), key=lambda x: x[1])

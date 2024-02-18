@@ -5,6 +5,8 @@ class WordTokenizer:
 
     def tokenize(self, text: str) -> list:
         tokens = text.split()
+        for i in range(len(tokens)):
+            tokens[i] =  text = tokens[i].strip('\u200c')
         if self._join_verb_parts:
             tokens = WordTokenizer._join_verb_parts(tokens)
         if self._join_abbreviation:
