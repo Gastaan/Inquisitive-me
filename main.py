@@ -2,7 +2,7 @@ import json
 
 from parsivar import FindStems
 from hazm import WordTokenizer, Normalizer
-from tools import Indexer
+from indexer import Indexer
 
 
 def get_collection():

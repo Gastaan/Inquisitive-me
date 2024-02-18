@@ -76,7 +76,6 @@ class Indexer:
 
         for i in range(min(50, len(document_frequencies))):
             term = document_frequencies[i][1]
-            print(term, postings_list[term][0])
             self.postings_list.pop(term, None)
 
     def create_champions_list(self) -> None:
